@@ -1,13 +1,14 @@
 package com.G2.guessTheNumber.dto;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
+
 
 public class Round {
     private int roundId;
     private int gameId;
     private String guess;
     private String resultGuess;
-    private LocalDateTime roundTime;
+    private Timestamp roundTime;
 
     public int getRoundId() {
         return roundId;
@@ -41,12 +42,12 @@ public class Round {
         this.resultGuess = resultGuess;
     }
 
-    public LocalDateTime getTime() {
-        return time;
+    public Timestamp getTime() {
+        return roundTime;
     }
 
-    public void setTime(LocalDateTime time) {
-        this.time = time;
+    public void setTime(Timestamp time) {
+        this.roundTime = time;
     }
 
 }
