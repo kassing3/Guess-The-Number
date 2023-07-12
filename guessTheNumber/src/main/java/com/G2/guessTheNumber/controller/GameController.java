@@ -1,5 +1,8 @@
 package com.G2.guessTheNumber.controller;
 
+
+import com.G2.guessTheNumber.dto.Game;
+import org.springframework.web.bind.annotation.GetMapping;
 import com.G2.guessTheNumber.dto.Round;
 import com.G2.guessTheNumber.service.GameServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +21,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api")
 public class GameController {
-
     @Autowired
     GameServiceImpl gameServiceImpl;
 
@@ -59,5 +63,9 @@ public class GameController {
         return gameServiceImpl.getAllRoundsById(id);
         //YOUR CODE ENDS HERE
     }
-    
+    @GetMapping("/game")
+    public List<Game> getAllGames(){
+        return gameServiceImpl.getAllGames();
+    }
+
 }

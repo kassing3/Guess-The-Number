@@ -1,9 +1,13 @@
 package com.G2.guessTheNumber.service;
 
+import com.G2.guessTheNumber.dto.Game;
+import com.G2.guessTheNumber.dto.Status;
+
+import java.util.List;
+
 import com.G2.guessTheNumber.dao.GameDao;
 import com.G2.guessTheNumber.dao.RoundDao;
 import com.G2.guessTheNumber.dto.Round;
-import com.G2.guessTheNumber.dto.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,14 +16,6 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.HashSet;
 import java.util.Set;
-
-import com.G2.guessTheNumber.dto.Game;
-import com.G2.guessTheNumber.dto.Status;
-import com.G2.guessTheNumber.dao.RoundDao;
-import com.G2.guessTheNumber.dto.Round;
-import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.Random;
 
@@ -130,6 +126,17 @@ public class GameServiceImpl implements GameServiceInterface {
         //No duplicates were found
         return false;
     }
+    @Override
+    public List<Game> getAllGames() {
+        List<Game> games = gameDao.getAllGames();
+        for (Game game : games) {
+            if (game.getStatus().equals(Status.IN_PROGRESS)) {
+                game.setAnswer("****");
+            }
+        }
+        return games;
+    }
 
 
 }
+
