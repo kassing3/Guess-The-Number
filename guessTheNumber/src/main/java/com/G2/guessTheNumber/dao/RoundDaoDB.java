@@ -11,25 +11,37 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
 
+import com.G2.guessTheNumber.dao.mappers.RoundMapper;
+import org.springframework.dao.DataAccessException;
+
+
 @Repository
 public class RoundDaoDB implements RoundDao {
 
     @Autowired
-    private final JdbcTemplate jdbcTemplate;
+    JdbcTemplate jdbc;
 
     public RoundDaoDB(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+        this.jdbc = jdbcTemplate;
     }
+
 
     @Override
     public Round getRoundId(int id) {
-        return null;
+        try {
+            final String SELECT_ROUND_BY_ID = "SELECT * FROM round WHERE roundId = ?";
+            return jdbc.queryForObject(SELECT_ROUND_BY_ID, new RoundMapper(), id);
+        } catch (DataAccessException ex) {
+            return null;
+        }
     }
 
     @Override
-    public List<Round> getAllRounds(int gameId) {
-        return null;
+    public List<Round> getAllRoundsById(int gameId) {
+        final String SELECT_ALL_ROUNDS = "SELECT * FROM round where gameID = ? ORDER BY roundTime";
+        return jdbc.query(SELECT_ALL_ROUNDS, new RoundMapper(), gameId);
     }
+
 
     @Override
     public Round createRound(Round round) {
@@ -41,7 +53,7 @@ public class RoundDaoDB implements RoundDao {
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
 
         // Executing the update using a lambda function with Connection and PreparedStatement
-        jdbcTemplate.update((Connection conn) -> {
+        jdbc.update((Connection conn) -> {
             PreparedStatement statement = conn.prepareStatement(INSERT_ROUND, Statement.RETURN_GENERATED_KEYS);
             statement.setInt(1, round.getGameId());
             statement.setString(2, round.getGuess());
@@ -54,5 +66,6 @@ public class RoundDaoDB implements RoundDao {
         round.setRoundId(keyHolder.getKey().intValue());
         return round;
     }
-
 }
+
+

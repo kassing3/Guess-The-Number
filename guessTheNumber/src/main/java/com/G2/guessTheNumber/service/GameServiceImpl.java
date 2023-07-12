@@ -13,13 +13,45 @@ import java.time.ZoneOffset;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.G2.guessTheNumber.dto.Game;
+import com.G2.guessTheNumber.dto.Status;
+import com.G2.guessTheNumber.dao.RoundDao;
+import com.G2.guessTheNumber.dto.Round;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Random;
+
 @Service
-public class GameServiceImpl implements GameServiceInterface{
+public class GameServiceImpl implements GameServiceInterface {
 
     @Autowired
     GameDao gameDao;
     @Autowired
     RoundDao roundDao;
+
+    public List<Round> getAllRoundsById(int gameId) {
+        return roundDao.getAllRoundsById(gameId);
+    }
+
+    public Game newGame() {
+        Game game = new Game();
+        Random random = new Random();
+        //stores digits of the answer
+        StringBuilder answer = new StringBuilder();
+
+        //generates 4-digit answer for game
+        for (int i = 0; i < 4; i++) {
+            int num = random.nextInt(10);
+            answer.append(num);
+        }
+        //sets answer and status of game
+        game.setAnswer(answer.toString());
+        game.setStatus(Status.IN_PROGRESS);
+        return game;
+    }
+
     @Override
     public Round addNewRound(Round round) {
         //Get and set the current timestamp
@@ -28,9 +60,9 @@ public class GameServiceImpl implements GameServiceInterface{
 
         // Add new guess error handling
         // Game id empty or nonexistent game
-        if(round.getGameId() == 0
+        if (round.getGameId() == 0
             //TODO  || gameDao.getGameById(round.getRoundId()) == null
-               ){
+        ) {
             round.setResultGuess("ERROR: Please enter valid game id.");
             return round;
         }
@@ -40,12 +72,11 @@ public class GameServiceImpl implements GameServiceInterface{
 //            return round;
 //        }
         // Guess is empty or does not have 4 char
-        else if(round.getGuess().toString().isEmpty()
-                || round.getGuess().toString().length() != 4){
+        else if (round.getGuess().toString().isEmpty()
+                || round.getGuess().toString().length() != 4) {
             round.setResultGuess("ERROR: Guess should be 4 distinct numbers");
             return round;
-        }
-        else if(hasDuplicates(round.getGuess())) {
+        } else if (hasDuplicates(round.getGuess())) {
             round.setResultGuess("ERROR: No duplicate numbers allowed");
             return round;
         }
@@ -55,7 +86,7 @@ public class GameServiceImpl implements GameServiceInterface{
         round.setResultGuess(resultGuess);
 
         //Mark the game finished if the result has 4 exact matches
-        if(resultGuess.equals("e:4:p:0")) {
+        if (resultGuess.equals("e:4:p:0")) {
             gameDao.getGameById(round.getGameId()).setStatus(Status.FINISHED);
         }
 
@@ -73,13 +104,13 @@ public class GameServiceImpl implements GameServiceInterface{
 
         String userGuess = round.getGuess();
         // Calculate exact matches
-        for(int i = 0 ; i < 4 ; i++ ) {
+        for (int i = 0; i < 4; i++) {
             char guessDigit = userGuess.charAt(i);
             char secretDigit = gameResult.charAt(i);
 
-            if(guessDigit == secretDigit) {
+            if (guessDigit == secretDigit) {
                 exactMatches++;
-            } else if(gameResult.contains(String.valueOf(guessDigit))) {
+            } else if (gameResult.contains(String.valueOf(guessDigit))) {
                 partialMatches++;
             }
         }
@@ -90,8 +121,8 @@ public class GameServiceImpl implements GameServiceInterface{
     private boolean hasDuplicates(String sequence) {
         Set<Character> charSet = new HashSet<>();
 
-        for(char c : sequence.toCharArray()) {
-            if(charSet.contains(c)) {
+        for (char c : sequence.toCharArray()) {
+            if (charSet.contains(c)) {
                 return true;
             }
             charSet.add(c);
@@ -99,4 +130,6 @@ public class GameServiceImpl implements GameServiceInterface{
         //No duplicates were found
         return false;
     }
+
+
 }
