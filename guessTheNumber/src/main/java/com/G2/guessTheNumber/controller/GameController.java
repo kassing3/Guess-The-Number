@@ -6,6 +6,11 @@ import com.G2.guessTheNumber.dto.Game;
 import com.G2.guessTheNumber.service.GameServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
+import com.G2.guessTheNumber.dto.Round;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,6 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api")
 public class GameController {
+    @Autowired
+    GameServiceImpl gameServiceImpl;
+
     private final GameDao gameDao;
     private final RoundDao roundDao;
 
@@ -25,7 +33,7 @@ public class GameController {
     @ResponseStatus(HttpStatus.CREATED) //sets status to 201 when successfully created
     public Game create() {
         //instantiate GameServiceImpl to access game-related logic
-        GameServiceImpl gameService = new GameServiceImpl();
+        GameServiceImpl gameService = new GameServiceImpl(roundDao);
         //generates new game using gameService's newGame() method
         Game newGame = gameService.newGame();
         //saves new game to database using gameDao's createGame() method
@@ -33,4 +41,11 @@ public class GameController {
 //        return gameService.getGame(newGame.getGameId());
         return gameService.newGame();
     }
+    @GetMapping("/rounds/{id}")
+    public List<Round> getAllRoundsById(@PathVariable int id) {
+        //YOUR CODE STARTS HERE
+        return gameServiceImpl.getAllRoundsById(id);
+        //YOUR CODE ENDS HERE
+    }
+    
 }

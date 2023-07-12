@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface RoundDao {
     Round getRoundId(int id);
-    List<Round> getAllRounds(int gameId);
+    List<Round> getAllRoundsById(int gameId);
     Round createRound(Round round);
 
 }
