@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.sql.*;
 
     @Repository
@@ -58,15 +60,17 @@ import java.sql.*;
         public List<Game> getAllGames() {
             String sql = "SELECT * FROM game";
             return jdbcTemplate.query(sql, new com.G2.guessTheNumber.dao.mappers.GameMapper());
+        }
 
-            @Override
-            public void updateGame (Game game){
+//            @Override
+//            public void updateGame (Game game){
 
-            }
-
-            @Override
-            public void deleteGameById ( int id){
-
-            }
+        @Override
+        @Transactional
+        public void deleteGameById(int gameId){
+            final String DELETE_IN_ROUND = "DELETE FROM round WHERE gameId = ?";
+            jdbcTemplate.update(DELETE_IN_ROUND, gameId);
+            final String DELETE_IN_GAME = "DELETE FROM game WHERE gameId = ?";
+            jdbcTemplate.update(DELETE_IN_GAME, gameId);
         }
     }

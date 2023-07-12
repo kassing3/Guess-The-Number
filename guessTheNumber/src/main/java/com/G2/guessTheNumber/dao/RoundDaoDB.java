@@ -13,6 +13,7 @@ import java.util.List;
 
 import com.G2.guessTheNumber.dao.mappers.RoundMapper;
 import org.springframework.dao.DataAccessException;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Repository
@@ -66,6 +67,12 @@ public class RoundDaoDB implements RoundDao {
         round.setRoundId(keyHolder.getKey().intValue());
         return round;
     }
+    @Override
+    @Transactional
+    public void deleteRoundById (int roundId){
+        final String sql = "DELETE FROM round WHERE roundId = ?";
+        jdbc.update(sql, roundId);
+        }
 }
 
 
