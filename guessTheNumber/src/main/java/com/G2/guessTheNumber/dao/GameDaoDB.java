@@ -1,15 +1,16 @@
 package com.G2.guessTheNumber.dao;
 
 import com.G2.guessTheNumber.dto.Game;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
 import com.G2.guessTheNumber.dto.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.stereotype.Repository;
 
 import java.sql.*;
-import java.util.List;
 
 @Repository
 public class GameDaoDB implements GameDao {
@@ -40,6 +41,7 @@ public class GameDaoDB implements GameDao {
 
     @Override
     public Game createGame(Game game) {
+
         final String sql = "INSERT INTO Game(answer, status) VALUES(?,?);";
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
 
