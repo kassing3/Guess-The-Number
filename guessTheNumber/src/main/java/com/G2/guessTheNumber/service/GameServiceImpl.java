@@ -3,7 +3,6 @@ package com.G2.guessTheNumber.service;
 import com.G2.guessTheNumber.dto.Game;
 import com.G2.guessTheNumber.dto.Status;
 
-import java.sql.Array;
 import java.util.*;
 
 import com.G2.guessTheNumber.dao.GameDao;
@@ -29,7 +28,7 @@ public class GameServiceImpl implements GameServiceInterface {
     public Game newGame() {
         Game game = new Game();
         StringBuilder answer = new StringBuilder();
-//        Random random = new Random();
+
         //stores digits of the answer
 
         List<Integer> numbers = new ArrayList<>();
@@ -49,7 +48,8 @@ public class GameServiceImpl implements GameServiceInterface {
         game.setAnswer(answer.toString());
         game.setStatus(Status.IN_PROGRESS);
 
-        return game;
+
+        return  gameDao.createGame(game);
     }
 
     @Override
@@ -110,11 +110,9 @@ public class GameServiceImpl implements GameServiceInterface {
 
         //Mark the game finished if the result has 4 exact matches
         if (resultGuess.equals("e:4:p:0")) {
-            System.out.println("Correct guess ");
             Game updatedGame = getGameById(round.getGameId());
-            updatedGame.setStatus(Status.FINISHED);
+            gameDao.updateGame(updatedGame);
 
-            System.out.println(updatedGame.getStatus());
         }
 
         return roundDao.createRound(round);

@@ -8,6 +8,8 @@ import com.G2.guessTheNumber.dto.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.sql.*;
 
 @Repository
@@ -58,10 +60,25 @@ public class GameDaoDB implements GameDao {
     @Override
     public List<Game> getAllGames() {
         String sql = "SELECT * FROM game";
-
         return jdbcTemplate.query(sql, new com.G2.guessTheNumber.dao.mappers.GameMapper());
+    }
+
+    @Override
+    public void updateGame(Game game) {
+
+        final String UPDATE_GAME_STATUS = "UPDATE game SET status = 'FINISHED' WHERE gameId = ?";
+
+        jdbcTemplate.update(UPDATE_GAME_STATUS, game.getGameId());
 
     }
 
 
-}
+    @Override
+    @Transactional
+    public void deleteGameById(int gameId){
+        final String DELETE_IN_ROUND = "DELETE FROM round WHERE gameId = ?";
+        jdbcTemplate.update(DELETE_IN_ROUND, gameId);
+        final String DELETE_IN_GAME = "DELETE FROM game WHERE gameId = ?";
+        jdbcTemplate.update(DELETE_IN_GAME, gameId);
+    }
+    }

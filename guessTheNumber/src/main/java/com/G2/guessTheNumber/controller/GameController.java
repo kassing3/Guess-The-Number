@@ -35,14 +35,8 @@ public class GameController {
     @PostMapping("/begin")
     @ResponseStatus(HttpStatus.CREATED) //sets status to 201 when successfully created
     public Game create() {
-        //instantiate GameServiceImpl to access game-related logic
-        GameServiceImpl gameService = new GameServiceImpl();
-        //generates new game using gameService's newGame() method
-        Game newGame = gameService.newGame();
-        //saves new game to database using gameDao's createGame() method
-        gameDao.createGame(newGame);
-//        return gameService.getGame(newGame.getGameId());
-        return gameService.newGame();
+
+        return gameServiceImpl.newGame();
     }
 
     @PostMapping("/guess")
