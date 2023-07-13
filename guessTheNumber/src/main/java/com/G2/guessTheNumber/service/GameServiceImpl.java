@@ -3,21 +3,16 @@ package com.G2.guessTheNumber.service;
 import com.G2.guessTheNumber.dto.Game;
 import com.G2.guessTheNumber.dto.Status;
 
-import java.util.List;
+import java.sql.Array;
+import java.util.*;
 
 import com.G2.guessTheNumber.dao.GameDao;
 import com.G2.guessTheNumber.dao.RoundDao;
 import com.G2.guessTheNumber.dto.Round;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
-
 import java.sql.Timestamp;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.util.HashSet;
-import java.util.Set;
-
-import java.util.Random;
 
 @Service
 public class GameServiceImpl implements GameServiceInterface {
@@ -33,19 +28,52 @@ public class GameServiceImpl implements GameServiceInterface {
 
     public Game newGame() {
         Game game = new Game();
-        Random random = new Random();
-        //stores digits of the answer
         StringBuilder answer = new StringBuilder();
+//        Random random = new Random();
+        //stores digits of the answer
 
-        //generates 4-digit answer for game
-        for (int i = 0; i < 4; i++) {
-            int num = random.nextInt(10);
-            answer.append(num);
+        List<Integer> numbers = new ArrayList<>();
+
+        for (int i = 1; i <= 9; i++) {
+            numbers.add(i);
         }
-        //sets answer and status of game
+
+        Collections.shuffle(numbers);
+
+        for ( int j = 0; j < 4; j++) {
+
+            answer.append(numbers.get(j));
+
+        }
+
         game.setAnswer(answer.toString());
         game.setStatus(Status.IN_PROGRESS);
+
         return game;
+    }
+
+    @Override
+    public Game getGameById(int gameId) {
+        try {
+
+            Game game  = gameDao.getGameById(gameId);
+            List rounds = roundDao.getAllRoundsById(gameId);
+
+            game.setRounds(rounds);
+            game.getRounds();
+
+            if (game.getStatus() == Status.IN_PROGRESS) {
+                game.setAnswer("xxxx");
+            }
+
+            return game;
+
+        } catch (DataAccessException e) {
+
+            System.out.println(e);
+
+            return null;
+        }
     }
 
     @Override
@@ -57,17 +85,16 @@ public class GameServiceImpl implements GameServiceInterface {
         // Add new guess error handling
         // Game id empty or nonexistent game
         if (round.getGameId() == 0
-            //TODO  || gameDao.getGameById(round.getRoundId()) == null
+                || getGameById(round.getGameId()) == null
         ) {
             round.setResultGuess("ERROR: Please enter valid game id.");
             return round;
         }
-        //TODO
-//        else if(gameDao.getGameById(round.getGameId()).getStatus().equals(Status.FINISHED)) {
-//            round.setResultGuess("ERROR: Game is already finished.");
-//            return round;
-//        }
-        // Guess is empty or does not have 4 char
+        // If game is done
+        else if(getGameById(round.getGameId()).getStatus().equals(Status.FINISHED)) {
+            round.setResultGuess("ERROR: Game is already finished.");
+            return round;
+        } // Guess is empty or does not have 4 char
         else if (round.getGuess().toString().isEmpty()
                 || round.getGuess().toString().length() != 4) {
             round.setResultGuess("ERROR: Guess should be 4 distinct numbers");
@@ -83,7 +110,11 @@ public class GameServiceImpl implements GameServiceInterface {
 
         //Mark the game finished if the result has 4 exact matches
         if (resultGuess.equals("e:4:p:0")) {
-            gameDao.getGameById(round.getGameId()).setStatus(Status.FINISHED);
+            System.out.println("Correct guess ");
+            Game updatedGame = getGameById(round.getGameId());
+            updatedGame.setStatus(Status.FINISHED);
+
+            System.out.println(updatedGame.getStatus());
         }
 
         return roundDao.createRound(round);
@@ -95,8 +126,8 @@ public class GameServiceImpl implements GameServiceInterface {
         int partialMatches = 0;
 
         int gameId = round.getGameId();
-//        TODO : String gameResult = gameDao.getGameById(gameId).getAnswer();
-        String gameResult = "4321"; //sample game result
+
+        String gameResult = gameDao.getGameById(gameId).getAnswer();
 
         String userGuess = round.getGuess();
         // Calculate exact matches
@@ -129,7 +160,12 @@ public class GameServiceImpl implements GameServiceInterface {
     @Override
     public List<Game> getAllGames() {
         List<Game> games = gameDao.getAllGames();
+
         for (Game game : games) {
+            List rounds = roundDao.getAllRoundsById(game.getGameId());
+
+            game.setRounds(rounds);
+
             if (game.getStatus().equals(Status.IN_PROGRESS)) {
                 game.setAnswer("****");
             }

@@ -6,9 +6,10 @@ import java.util.List;
 import com.G2.guessTheNumber.dto.Round;
 
 public interface GameServiceInterface {
-    public List<Game> getAllGames();
-    Game newGame();
 
+    Game newGame();
+    Game getGameById(int gameId);
+    public List<Game> getAllGames();
     Round addNewRound(Round round);
 }
 
