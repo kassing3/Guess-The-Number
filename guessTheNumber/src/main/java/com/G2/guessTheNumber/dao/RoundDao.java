@@ -8,5 +8,6 @@ public interface RoundDao {
     Round getRoundId(int id);
     List<Round> getAllRoundsById(int gameId);
     Round createRound(Round round);
+    void deleteRoundById(int id);
 
 }
