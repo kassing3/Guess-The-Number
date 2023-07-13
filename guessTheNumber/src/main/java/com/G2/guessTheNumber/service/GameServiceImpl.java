@@ -48,7 +48,9 @@ public class GameServiceImpl implements GameServiceInterface {
         game.setAnswer(answer.toString());
         game.setStatus(Status.IN_PROGRESS);
 
-
+        //Set the rounds to empty List
+        List<Round> rounds = new ArrayList<>();
+        game.setRounds(rounds);
         return  gameDao.createGame(game);
     }
 
@@ -111,8 +113,8 @@ public class GameServiceImpl implements GameServiceInterface {
         //Mark the game finished if the result has 4 exact matches
         if (resultGuess.equals("e:4:p:0")) {
             Game updatedGame = getGameById(round.getGameId());
+            updatedGame.setStatus(Status.FINISHED);
             gameDao.updateGame(updatedGame);
-
         }
 
         return roundDao.createRound(round);
