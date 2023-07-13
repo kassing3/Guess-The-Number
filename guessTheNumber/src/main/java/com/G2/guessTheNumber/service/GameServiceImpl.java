@@ -3,7 +3,7 @@ package com.G2.guessTheNumber.service;
 import com.G2.guessTheNumber.dto.Game;
 import com.G2.guessTheNumber.dto.Status;
 
-import java.util.List;
+import java.util.*;
 
 import com.G2.guessTheNumber.dao.GameDao;
 import com.G2.guessTheNumber.dao.RoundDao;
@@ -14,10 +14,6 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.HashSet;
-import java.util.Set;
-
-import java.util.Random;
 
 @Service
 public class GameServiceImpl implements GameServiceInterface {
@@ -135,6 +131,13 @@ public class GameServiceImpl implements GameServiceInterface {
             }
         }
         return games;
+    }
+    @Override
+    public void setTime(Round round) {
+        Calendar calendar = Calendar.getInstance();
+        Timestamp guessTime = new Timestamp(calendar.getTime().getTime());
+
+        round.setTime(guessTime);
     }
 
 

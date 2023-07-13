@@ -8,6 +8,7 @@ import com.G2.guessTheNumber.dto.Round;
 public interface GameServiceInterface {
     public List<Game> getAllGames();
     Game newGame();
+    public void setTime(Round round);
 
     Round addNewRound(Round round);
 }
