@@ -22,19 +22,20 @@ class RoundDaoDBTest {
 
     public RoundDaoDBTest(){
     }
-    //TODO creating round object so we can access getGameId from round, I'm not sure if this is correct
-    Round round = new Round();
 
     @BeforeEach
     void setUp() {
+        // Get all the games
         List<Game> games = gameDao.getAllGames();
         for(Game game : games) {
+            //First delete all the rounds of the current game
+            List<Round> rounds = roundDao.getAllRoundsById(game.getGameId());
+            for(Round round : rounds) {
+                roundDao.deleteRoundById(round.getRoundId());
+            }
+
+            //Then delete the game
             gameDao.deleteGameById(game.getGameId());
-        }
-        //TODO not sure what to put inside of the getALlRoundsById
-        List<Round> rounds = roundDao.getAllRoundsById(round.getGameId());
-        for(Round round : rounds) {
-            roundDao.deleteRoundById(round.getRoundId());
         }
     }
 
@@ -43,14 +44,14 @@ class RoundDaoDBTest {
     }
 
     @Test
-    void getRoundId() {
+    void getRoundIdTest() {
     }
 
     @Test
-    void getAllRoundsById() {
+    void getAllRoundsByIdTest() {
     }
 
     @Test
-    void createRound() {
+    void createRoundTest() {
     }
 }
