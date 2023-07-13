@@ -19,7 +19,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class RoundDaoDBTest {
-    private JdbcTemplate jdbcTemplate;
 
     @Autowired
     RoundDao roundDao;
@@ -46,16 +45,33 @@ class RoundDaoDBTest {
         }
     }
 
-    @AfterEach
-    void tearDown() {
-    }
 
     @Test
-    void getRoundIdTest() {
-    }
+    @DisplayName("Get all rounds by game ID")
+    void getAllRoundsById() {
+        Game testGame = new Game();
+        testGame.setAnswer("1234");
+        testGame.setStatus(Status.IN_PROGRESS);
+        testGame = gameDao.createGame(testGame);
 
-    @Test
-    void getAllRoundsByIdTest() {
+        Round round1 = new Round();
+        round1.setGameId(testGame.getGameId());
+        round1.setGuess("9876");
+        round1.setResultGuess("e:0 p:0");
+        round1.setTime(Timestamp.valueOf("2023-07-11 03:21:01"));
+        round1 = roundDao.createRound(round1);
+
+        Round round2 = new Round();
+        round2.setGameId(testGame.getGameId());
+        round2.setGuess("1876");
+        round2.setResultGuess("e:1 p:0");
+        round2.setTime(Timestamp.valueOf("2023-07-11 03:30:01"));
+        round2 = roundDao.createRound(round2);
+
+        List<Round> resultList = roundDao.getAllRoundsById(testGame.getGameId());
+        assertEquals(2, resultList.size());
+        assertTrue(resultList.contains(round1));
+        assertTrue(resultList.contains(round2));
     }
 
     @Test
@@ -88,4 +104,5 @@ class RoundDaoDBTest {
         // Assert round from db is equal to local round
         assertEquals(round, roundFromDao);
     }
+
 }
