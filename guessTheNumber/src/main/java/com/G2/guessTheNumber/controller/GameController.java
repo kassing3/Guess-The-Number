@@ -1,6 +1,5 @@
 package com.G2.guessTheNumber.controller;
 
-
 import com.G2.guessTheNumber.dto.Game;
 import org.springframework.web.bind.annotation.GetMapping;
 import com.G2.guessTheNumber.dto.Round;
@@ -10,12 +9,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import com.G2.guessTheNumber.dao.GameDao;
 import com.G2.guessTheNumber.dao.RoundDao;
-import com.G2.guessTheNumber.dto.Game;
 import org.springframework.http.HttpStatus;
-
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -40,14 +35,8 @@ public class GameController {
     @PostMapping("/begin")
     @ResponseStatus(HttpStatus.CREATED) //sets status to 201 when successfully created
     public Game create() {
-        //instantiate GameServiceImpl to access game-related logic
-        GameServiceImpl gameService = new GameServiceImpl();
-        //generates new game using gameService's newGame() method
-        Game newGame = gameService.newGame();
-        //saves new game to database using gameDao's createGame() method
-        gameDao.createGame(newGame);
-//        return gameService.getGame(newGame.getGameId());
-        return gameService.newGame();
+
+        return gameServiceImpl.newGame();
     }
 
     @PostMapping("/guess")
@@ -63,9 +52,16 @@ public class GameController {
         return gameServiceImpl.getAllRoundsById(id);
         //YOUR CODE ENDS HERE
     }
-    @GetMapping("/game")
+    @GetMapping("/games")
     public List<Game> getAllGames(){
         return gameServiceImpl.getAllGames();
+    }
+
+    @GetMapping("/game/{gameId}")
+    public Game getGameById(@PathVariable int gameId) {
+
+        return gameServiceImpl.getGameById(gameId);
+
     }
 
 }

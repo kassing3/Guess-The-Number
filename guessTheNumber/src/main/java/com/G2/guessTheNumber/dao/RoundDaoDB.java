@@ -5,12 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
-
 import com.G2.guessTheNumber.dao.mappers.RoundMapper;
 import org.springframework.dao.DataAccessException;
 import org.springframework.transaction.annotation.Transactional;
